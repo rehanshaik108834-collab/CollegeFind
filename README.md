@@ -16,9 +16,9 @@ A production-grade college discovery and comparison platform that lets students 
 
 | Service | URL |
 |---|---|
-| Frontend | `https://campusfind.vercel.app` |
-| Backend API | `https://campusfind-api.railway.app` |
-| Swagger Docs | `https://campusfind-api.railway.app/api/docs` |
+| Frontend | [https://college-find-bay.vercel.app](https://college-find-bay.vercel.app) |
+| Backend API | [https://rehan3106-collegefind-backend.hf.space/api](https://rehan3106-collegefind-backend.hf.space/api) |
+| Swagger Docs | [https://rehan3106-collegefind-backend.hf.space/api/docs](https://rehan3106-collegefind-backend.hf.space/api/docs) |
 
 **Demo credentials:** `demo@college.in` / `demo1234`
 
@@ -37,7 +37,7 @@ A production-grade college discovery and comparison platform that lets students 
 | ORM | Prisma |
 | Database | PostgreSQL (Neon) |
 | Auth | JWT (passport-jwt) |
-| Deployment | Vercel + Railway + Neon |
+| Deployment | Vercel (Frontend) + Hugging Face Spaces (Backend) |
 
 ---
 
@@ -78,7 +78,7 @@ A production-grade college discovery and comparison platform that lets students 
 
 ## Project Structure
 
-```
+```text
 college-discovery/
 ├── backend/                    # NestJS API
 │   ├── src/
@@ -110,7 +110,7 @@ college-discovery/
 ## Local Setup
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 20+
 - PostgreSQL (or free Neon account)
 
 ### Backend
@@ -131,10 +131,10 @@ npx prisma generate
 npx prisma db push
 
 # Seed with 20 colleges
-npx ts-node prisma/seed.ts
+npm run seed
 
 # Start dev server
-npx ts-node -r tsconfig-paths/register src/main.ts
+npm run start:dev
 # → Running on http://localhost:3000
 # → Swagger at http://localhost:3000/api/docs
 ```
@@ -194,27 +194,27 @@ npm run dev
 
 ## Deployment
 
-### Backend → Railway
+### Backend → Hugging Face Spaces (Docker)
 
-```bash
-# Set environment variables in Railway dashboard:
-DATABASE_URL=postgresql://...
-JWT_SECRET=your-secret-key
-FRONTEND_URL=https://your-app.vercel.app
-```
+1. Create a Blank Docker space on Hugging Face.
+2. Under **Settings** -> **Variables and secrets**, add:
+   - `DATABASE_URL`: Your PostgreSQL connection string (Secret)
+   - `JWT_SECRET`: Random secure string (Secret)
+   - `FRONTEND_URL`: Your Vercel frontend URL (Variable)
+3. Push your repository to Hugging Face. The `Dockerfile` at the root handles building and deploying the NestJS API.
 
 ### Frontend → Vercel
 
-```bash
-# Set in Vercel project settings:
-VITE_API_URL=https://your-api.railway.app/api
-```
+1. Create a new Vercel project and point it to the `frontend` folder of your GitHub repository.
+2. Set the Environment Variable:
+   - `VITE_API_URL=https://rehan3106-collegefind-backend.hf.space/api`
+3. Deploy!
 
 ### Database → Neon
 
-1. Create free account at neon.tech
-2. Copy the connection string to `DATABASE_URL`
-3. Run `npx prisma db push` and then `npx ts-node prisma/seed.ts`
+1. Create a free account at [neon.tech](https://neon.tech).
+2. Copy the connection string and use it as your `DATABASE_URL`.
+3. Run `npx prisma db push` and `npm run seed` locally or using an action to populate data.
 
 ---
 
@@ -226,9 +226,7 @@ VITE_API_URL=https://your-api.railway.app/api
 
 **Why React Query?** Automatic caching, background refetching, and `invalidateQueries` make save/unsave feel instant with no manual state sync. `placeholderData` prevents flash during pagination.
 
-**Why slug-based routing?** `/colleges/iit-bombay` is readable, shareable, and SEO-friendly compared to UUID routes.
-
-**URL-synced filters:** Search params are kept in sync with query state so any filter combination is bookmarkable and shareable.
+**Why Docker on Hugging Face?** Provides a free, scalable, easily configurable environment for running Node.js backends that perfectly mimics standard production containerization.
 
 ---
 
@@ -242,7 +240,3 @@ VITE_API_URL=https://your-api.railway.app/api
 - Empty search results → illustrated empty state with reset CTA
 - Pagination on filter change → resets to page 1
 - Mobile: filter panel as bottom drawer
-
----
-
-*Built as part of the AI Software Engineer Internship demo task — Track B, Full Stack Role.*
