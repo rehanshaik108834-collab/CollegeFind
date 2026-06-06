@@ -74,6 +74,17 @@ A production-grade college discovery and comparison platform that lets students 
 - Heart-toggle save/unsave from any card or detail page
 - Real-time optimistic UI via React Query cache invalidation
 
+### 5. College Admission Predictor
+- Input academic scores and entrance exam percentiles
+- Get data-driven probability of admission to target colleges
+- Dynamic prediction algorithms based on historical cutoffs
+
+### 6. Student Discussions Forum
+- Ask questions and create threads about colleges, courses, or exams
+- Upvote and downvote questions and answers
+- Mark helpful answers as accepted
+- Rich community engagement with real-time feedback
+
 ---
 
 ## Project Structure
@@ -86,11 +97,13 @@ college-discovery/
 │   │   ├── colleges/           # Listing, search, detail, filters
 │   │   ├── compare/            # 2-3 college comparison
 │   │   ├── saved/              # User-scoped saved colleges
+│   │   ├── predictor/          # Admission prediction algorithms
+│   │   ├── discussions/        # Community forums and Q&A
 │   │   ├── prisma/             # PrismaService (global)
 │   │   └── main.ts             # Bootstrap + Swagger
 │   └── prisma/
 │       ├── schema.prisma       # DB schema
-│       └── seed.ts             # 20 seeded colleges
+│       └── seed.ts             # Seeded colleges and data
 │
 └── frontend/                   # React + Vite
     └── src/
@@ -99,7 +112,7 @@ college-discovery/
         │   ├── college/        # CollegeCard, FilterPanel
         │   ├── layout/         # Navbar, Footer, CompareBar, ProtectedRoute
         │   └── ui/             # StarRating, Skeleton, Pagination
-        ├── pages/              # HomePage, CollegesPage, Detail, Compare, Saved, Auth
+        ├── pages/              # Home, Colleges, Detail, Compare, Saved, Predictor, Discussions
         ├── stores/             # Zustand: authStore, compareStore
         ├── hooks/              # useDebounce
         └── types/              # Shared TypeScript interfaces
@@ -174,13 +187,26 @@ npm run dev
 | GET | `/api/colleges/filters` | Available states, types, fees range |
 | GET | `/api/colleges/:slug` | Full college detail |
 
-**Query params for `/api/colleges`:**
-`search`, `state`, `type`, `minFees`, `maxFees`, `minRating`, `sortBy`, `sortOrder`, `page`, `limit`
-
 ### Compare
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/api/compare?ids=id1,id2,id3` | Compare 2–3 colleges |
+
+### Predictor
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/predict` | Predict admission probability |
+
+### Discussions
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/discussions` | List all discussion threads |
+| POST | `/api/discussions` | Create a new discussion thread |
+| GET | `/api/discussions/:id` | Get thread details and its answers |
+| POST | `/api/discussions/:id/answers` | Post an answer to a thread |
+| POST | `/api/discussions/:id/vote` | Upvote/Downvote a thread |
+| POST | `/api/discussions/answers/:id/vote` | Upvote/Downvote an answer |
+| PATCH | `/api/discussions/answers/:id/accept` | Mark answer as accepted |
 
 ### Saved (JWT required)
 | Method | Endpoint | Description |
