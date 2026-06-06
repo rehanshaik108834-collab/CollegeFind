@@ -1,5 +1,8 @@
-# Use Node.js LTS
-FROM node:20-alpine
+# Use Node.js LTS (Slim version for better Prisma compatibility)
+FROM node:20-slim
+
+# Install OpenSSL (required by Prisma)
+RUN apt-get update -y && apt-get install -y openssl
 
 # Set the working directory
 WORKDIR /app
