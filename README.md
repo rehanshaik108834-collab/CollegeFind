@@ -1,3 +1,11 @@
+---
+title: CollegeFind Backend
+emoji: 🎓
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
 # CampusFind — College Discovery Platform
 
 A production-grade college discovery and comparison platform that lets students search, filter, save, and compare Indian colleges with real placement data.
