@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String
+  passwordHash  String
+  savedColleges SavedCollege[]
+  threads       Thread[]       @relation("ThreadAuthor")
+  answers       Answer[]       @relation("AnswerAuthor")
+  threadVotes   ThreadVote[]
+  answerVotes   AnswerVote[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model College {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  location    String
+  city        String
+  state       String
+  type        String
+  fees        Int
+  rating      Float
+  established Int
+  description String
+  image       String   @default("")
+  website     String   @default("")
+  phone       String   @default("")
+  accreditation String @default("")
+
+  placements  Json
+  facilities  String[]
+  highlights  String[]
+
+  courses     Course[]
+  reviews     Review[]
+  savedBy     SavedCollege[]
+  cutoffs     PredictorCutoff[]
+  threads     Thread[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Course {
+  id         String  @id @default(cuid())
+  name       String
+  degree     String
+  duration   Int
+  seats      Int
+  fees       Int
+  college    College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  collegeId  String
+}
+
+model Review {
+  id        String  @id @default(cuid())
+  rating    Float
+  comment   String
+  author    String
+  year      Int
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  collegeId String
+  createdAt DateTime @default(now())
+}
+
+model SavedCollege {
+  id        String  @id @default(cuid())
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  collegeId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, collegeId])
+}
+
+// ──── Predictor ────
+
+model PredictorCutoff {
+  id          String  @id @default(cuid())
+  exam        String
+  category    String
+  openingRank Int
+  closingRank Int
+  college     College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  collegeId   String
+  year        Int     @default(2024)
+
+  @@unique([exam, category, collegeId, year])
+}
+
+// ──── Q&A / Discussions ────
+
+model Thread {
+  id        String       @id @default(cuid())
+  title     String
+  body      String
+  category  String
+  upvotes   Int          @default(0)
+  views     Int          @default(0)
+  college   College?     @relation(fields: [collegeId], references: [id])
+  collegeId String?
+  author    User         @relation("ThreadAuthor", fields: [authorId], references: [id])
+  authorId  String
+  answers   Answer[]
+  votes     ThreadVote[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Answer {
+  id         String       @id @default(cuid())
+  body       String
+  upvotes    Int          @default(0)
+  isAccepted Boolean      @default(false)
+  thread     Thread       @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  threadId   String
+  author     User         @relation("AnswerAuthor", fields: [authorId], references: [id])
+  authorId   String
+  votes      AnswerVote[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+model ThreadVote {
+  id       String @id @default(cuid())
+  thread   Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  threadId String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  value    Int
+
+  @@unique([threadId, userId])
+}
+
+model AnswerVote {
+  id       String @id @default(cuid())
+  answer   Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  answerId String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  value    Int
+
+  @@unique([answerId, userId])
+}
