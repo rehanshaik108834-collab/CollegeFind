@@ -25,4 +25,4 @@ EXPOSE 7860
 ENV PORT=7860
 
 # Command to run the application
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start"]
