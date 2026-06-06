@@ -1,7 +1,5 @@
 # CampusFind — College Discovery Platform
 
-> **Track B — Full Stack Engineer** | React + NestJS + PostgreSQL + Prisma
-
 A production-grade college discovery and comparison platform that lets students search, filter, save, and compare Indian colleges with real placement data.
 
 ---
